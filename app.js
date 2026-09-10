@@ -674,6 +674,6 @@ let state = loadState();
 state.settings.currency = 'INR';
 saveState();
 
-function defaultState() {
+
 
 
