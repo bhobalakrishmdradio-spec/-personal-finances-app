@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyFinances — Personal Finance Tracker</title>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-icon">💰</span>
+        <span class="brand-name">MyFinances</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" data-view="dashboard">📊 Dashboard</button>
+        <button class="nav-btn" data-view="transactions">📒 Transactions</button>
+        <button class="nav-btn" data-view="budgets">🎯 Budgets</button>
+        <button class="nav-btn" data-view="settings">⚙️ Settings</button>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="themeToggle" class="ghost-btn" title="Toggle light/dark theme">🌙 Dark mode</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <header class="topbar">
+        <h1 id="viewTitle">Dashboard</h1>
+        <button class="primary-btn" id="quickAddBtn">+ Add Transaction</button>
+      </header>
+
+      <!-- DASHBOARD VIEW -->
+      <section id="view-dashboard" class="view active">
+        <div class="cards">
+          <div class="card card-balance">
+            <div class="card-label">Total Balance</div>
+            <div class="card-value" id="statBalance">$0.00</div>
+          </div>
+          <div class="card card-income">
+            <div class="card-label">Income (this month)</div>
+            <div class="card-value" id="statIncome">$0.00</div>
+          </div>
+          <div class="card card-expense">
+            <div class="card-label">Expenses (this month)</div>
+            <div class="card-value" id="statExpense">$0.00</div>
+          </div>
+          <div class="card card-savings">
+            <div class="card-label">Savings Rate</div>
+            <div class="card-value" id="statSavingsRate">0%</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Spending by Category</h2>
+              <select id="chartMonthSelect"></select>
+            </div>
+            <canvas id="categoryChart" width="360" height="260"></canvas>
+            <ul id="chartLegend" class="legend"></ul>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Monthly Trend</h2>
+            </div>
+            <canvas id="trendChart" width="500" height="260"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Recent Transactions</h2>
+            <button class="link-btn" data-goto="transactions">View all →</button>
+          </div>
+          <div id="recentList" class="txn-list"></div>
+        </div>
+      </section>
+
+      <!-- TRANSACTIONS VIEW -->
+      <section id="view-transactions" class="view">
+        <div class="panel">
+          <div class="filters">
+            <input type="text" id="searchInput" placeholder="🔍 Search description..." />
+            <select id="filterType">
+              <option value="all">All Types</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+            <select id="filterCategory">
+              <option value="all">All Categories</option>
+            </select>
+            <input type="month" id="filterMonth" />
+            <button class="ghost-btn" id="clearFilters">Clear</button>
+          </div>
+          <div class="table-wrap">
+            <table class="txn-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Type</th>
+                  <th class="right">Amount</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="txnTableBody"></tbody>
+            </table>
+            <p id="emptyState" class="empty-state" hidden>No transactions found. Add your first one!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BUDGETS VIEW -->
+      <section id="view-budgets" class="view">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Monthly Budgets by Category</h2>
+            <span class="muted" id="budgetMonthLabel"></span>
+          </div>
+          <p class="muted">Set a monthly spending limit per expense category. Progress is tracked against the current calendar month.</p>
+          <div id="budgetList" class="budget-list"></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS VIEW -->
+      <section id="view-settings" class="view">
+        <div class="panel">
+          <h2>Preferences</h2>
+          <div class="settings-row">
+            <label for="currencySelect">Currency</label>
+            <select id="currencySelect">
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="INR">INR (₹)</option>
+              <option value="JPY">JPY (¥)</option>
+              <option value="CAD">CAD ($)</option>
+              <option value="AUD">AUD ($)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Data Management</h2>
+          <p class="muted">All your data is stored locally in this browser (localStorage) — nothing is sent to a server.</p>
+          <div class="settings-actions">
+            <button class="ghost-btn" id="exportBtn">⬇️ Export Data (JSON)</button>
+            <label class="ghost-btn file-btn">
+              ⬆️ Import Data (JSON)
+              <input type="file" id="importInput" accept="application/json" hidden />
+            </label>
+            <button class="danger-btn" id="resetBtn">🗑️ Reset All Data</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Sample Data</h2>
+          <p class="muted">New here? Load a few example transactions to see how MyFinances works.</p>
+          <button class="ghost-btn" id="loadSampleBtn">Load Sample Data</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add/Edit Transaction Modal -->
+  <div id="modalOverlay" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add Transaction</h2>
+        <button class="icon-btn" id="modalClose">✕</button>
+      </div>
+      <form id="txnForm">
+        <input type="hidden" id="txnId" />
+        <div class="form-row type-toggle">
+          <button type="button" class="type-btn active" data-type="expense" id="typeExpenseBtn">💸 Expense</button>
+          <button type="button" class="type-btn" data-type="income" id="typeIncomeBtn">💵 Income</button>
+        </div>
+        <div class="form-row">
+          <label for="txnDescription">Description</label>
+          <input type="text" id="txnDescription" required placeholder="e.g. Grocery shopping" />
+        </div>
+        <div class="form-row two-col">
+          <div>
+            <label for="txnAmount">Amount</label>
+            <input type="number" id="txnAmount" step="0.01" min="0.01" required placeholder="0.00" />
+          </div>
+          <div>
+            <label for="txnDate">Date</label>
+            <input type="date" id="txnDate" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="txnCategory">Category</label>
+          <select id="txnCategory" required></select>
+        </div>
+        <div class="form-row">
+          <label for="txnNotes">Notes (optional)</label>
+          <textarea id="txnNotes" rows="2" placeholder="Any extra details..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="ghost-btn" id="modalCancel">Cancel</button>
+          <button type="submit" class="primary-btn">Save Transaction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
