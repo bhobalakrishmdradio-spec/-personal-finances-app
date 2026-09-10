@@ -668,3 +668,9 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+let state = loadState();
+state.settings.currency = 'INR';
+saveState();
+
+
