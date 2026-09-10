@@ -39,7 +39,7 @@ function defaultState() {
   return {
     transactions: [],
     budgets: {},           // { categoryKey: monthlyLimit }
-    settings: { currency: 'USD', theme: 'light' },
+    settings: { currency: 'INR', theme: 'light' },
   };
 }
 
